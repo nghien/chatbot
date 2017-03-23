@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using ChatBot.Data.Infrastructure;
 using ChatBot.Data.Respositories;
@@ -25,14 +26,36 @@ namespace ChatBot.Controllers
             _loggingRepository = loggingRepository;
         }
 
-       
-        public IEnumerable<DomainViewModel> Get()
+
+        public IEnumerable<DomainViewModel> Get(string DOMAIN_like="", int _page = 1, int _limit = 20, int _start=1, int _end=1 )
         {
-            IEnumerable<DomainViewModel> domainVm = null;
+             IEnumerable<DomainViewModel> domainVm = null;
+           // PaginationSet<DomainViewModel> pagedSet = null;
             try
             {
-                var domains = _botDomainService.GetAll();
-                domainVm = Mapper.Map<IEnumerable<BOT_DOMAIN>, IEnumerable<DomainViewModel>>(domains);   
+                // int totalRow = 0;
+
+                var model = _botDomainService.GetAll(DOMAIN_like);
+                //totalRow = domains.Count();
+                //var query = domains.OrderByDescending(x => x.CreatedDate).Skip(page * pageSize).Take(pageSize);
+
+                int currentPage = _page;
+                int currentPageSize = _limit;
+
+                var totalRecord = model.Count();
+                var totalPages = (int)Math.Ceiling((double)totalRecord / _limit);
+
+                var domains = model.Skip((currentPage-1) * currentPageSize).Take(currentPageSize);
+               // IEnumerable<DomainViewModel> domainVm = Mapper.Map<IEnumerable<BOT_DOMAIN>, IEnumerable<DomainViewModel>>(domains);
+                domainVm = Mapper.Map<IEnumerable<BOT_DOMAIN>, IEnumerable<DomainViewModel>>(domains);
+
+                //pagedSet = new PaginationSet<DomainViewModel>()
+                //{
+                //    Page = currentPage,
+                //    TotalCount = totalPages,
+                //    TotalPages = (int)Math.Ceiling((decimal)totalRecord / currentPageSize),
+                //    Items = domainVm
+                //};
             }
             catch (Exception ex)
             {
@@ -41,6 +64,23 @@ namespace ChatBot.Controllers
             }
             return domainVm;
         }
+
+
+        //public IEnumerable<DomainViewModel> Get()
+        //{
+        //    IEnumerable<DomainViewModel> domainVm = null;
+        //    try
+        //    {
+        //        var domains = _botDomainService.GetAll();
+        //        domainVm = Mapper.Map<IEnumerable<BOT_DOMAIN>, IEnumerable<DomainViewModel>>(domains);   
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _loggingRepository.Add(new Error() { Message = ex.Message, StackTrace = ex.StackTrace, DateCreated = DateTime.Now });
+        //        _loggingRepository.Commit();
+        //    }
+        //    return domainVm;
+        //}
 
         [HttpGet("{id:int}", Name = "GetDomain")]
         public DomainViewModel Get(int id)

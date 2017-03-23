@@ -9,6 +9,7 @@ namespace ChatBot.Service
  
         IEnumerable<BOT_DOMAIN> GetAll();
 
+        IEnumerable<BOT_DOMAIN> GetAll(string keyword);
         BOT_DOMAIN GetById(int id);
 
         void Add(BOT_DOMAIN botDomain);
@@ -62,5 +63,12 @@ namespace ChatBot.Service
             _botDomainRepository.Commit();
         }
 
+        public IEnumerable<BOT_DOMAIN> GetAll(string keyword)
+        {
+            if (!string.IsNullOrEmpty(keyword))
+                return _botDomainRepository.GetMulti(x => x.DOMAIN.Contains(keyword));
+            else
+                return _botDomainRepository.GetAll();
+        }
     }
 }

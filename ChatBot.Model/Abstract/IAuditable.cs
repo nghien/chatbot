@@ -9,5 +9,17 @@ namespace ChatBot.Model.Abstract
         DateTime? UpdatedDate { set; get; }
         string UpdatedBy { set; get; }
         bool Status { set; get; }
+
+
+        //bool RECORD_STATUS { set; get; }
+        //DateTime? RECORD_STATUS { set; get; }
+        //bool AUTH_STATUS { set; get; }
+        //DateTime? APPROVE_DT { set; get; }
+        //DateTime? EDIT_DT { set; get; }
+
+
+
+
+
     }
 }
